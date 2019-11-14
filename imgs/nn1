@@ -1,0 +1,100 @@
+digraph {
+	rankdir=LR splines=true
+	node [shape=circle]
+	node [fixedsize=true]
+	node [height=0.8]
+	X0
+	X1
+	"N0
+b = 0.028"
+	"N1
+b = 2.4"
+	"N2
+b = -0.18"
+	"N3
+b = 1.2"
+	"N4
+b = -0.96"
+	"N5
+b = -0.36"
+	"N6
+b = 1e+01"
+	"N7
+b = -1.9"
+	"N8
+b = -1.0"
+	"N9
+b = 1.7"
+	"O0
+b = -8.69"
+	X0 -> "N0
+b = 0.028" [label=-4.12 minlen=3]
+	X0 -> "N1
+b = 2.4" [label=-6.82 minlen=3]
+	X0 -> "N2
+b = -0.18" [label=-4.03 minlen=3]
+	X0 -> "N3
+b = 1.2" [label=-4.96 minlen=3]
+	X0 -> "N4
+b = -0.96" [label=-3.69 minlen=3]
+	X0 -> "N5
+b = -0.36" [label=-3.95 minlen=3]
+	X0 -> "N6
+b = 1e+01" [label=-6.90 minlen=3]
+	X0 -> "N7
+b = -1.9" [label=-2.85 minlen=3]
+	X0 -> "N8
+b = -1.0" [label=-3.66 minlen=3]
+	X0 -> "N9
+b = 1.7" [label=-5.63 minlen=3]
+	X1 -> "N0
+b = 0.028" [label=-4.12 minlen=3]
+	X1 -> "N1
+b = 2.4" [label=-6.82 minlen=3]
+	X1 -> "N2
+b = -0.18" [label=-4.03 minlen=3]
+	X1 -> "N3
+b = 1.2" [label=-4.96 minlen=3]
+	X1 -> "N4
+b = -0.96" [label=-3.69 minlen=3]
+	X1 -> "N5
+b = -0.36" [label=-3.95 minlen=3]
+	X1 -> "N6
+b = 1e+01" [label=-6.90 minlen=3]
+	X1 -> "N7
+b = -1.9" [label=-2.85 minlen=3]
+	X1 -> "N8
+b = -1.0" [label=-3.66 minlen=3]
+	X1 -> "N9
+b = 1.7" [label=-5.63 minlen=3]
+	"N0
+b = 0.028" -> "O0
+b = -8.69" [label=-2.76 minlen=3]
+	"N1
+b = 2.4" -> "O0
+b = -8.69" [label=-8.22 minlen=3]
+	"N2
+b = -0.18" -> "O0
+b = -8.69" [label=-2.56 minlen=3]
+	"N3
+b = 1.2" -> "O0
+b = -8.69" [label=-4.44 minlen=3]
+	"N4
+b = -0.96" -> "O0
+b = -8.69" [label=-1.84 minlen=3]
+	"N5
+b = -0.36" -> "O0
+b = -8.69" [label=-2.39 minlen=3]
+	"N6
+b = 1e+01" -> "O0
+b = -8.69" [label=19.01 minlen=3]
+	"N7
+b = -1.9" -> "O0
+b = -8.69" [label=-0.39 minlen=3]
+	"N8
+b = -1.0" -> "O0
+b = -8.69" [label=-1.78 minlen=3]
+	"N9
+b = 1.7" -> "O0
+b = -8.69" [label=-5.73 minlen=3]
+}
