@@ -36,4 +36,4 @@ class Graph:
 			for j in range(len(self.output_neurons)):
 				self.dot.edge(self.hidden_neurons[i], self.output_neurons[j], label = f"{self.W2[i]:.2f}", minlen="3")
 
-		self.dot.render(os.path.join("..","imgs",self.file), view = show)  
+		self.dot.render(os.path.join("..","imgs",self.file), view = show, quiet_view = True)  
