@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+import cupy as cp
+from tqdm import trange
 
 plt.rcParams['figure.figsize'] = (10, 7)
 plt.rcParams['axes.grid'] = True
@@ -7,11 +9,8 @@ plt.rcParams['axes.grid'] = True
 np.random.seed(1)
 
 class NeuralNetwork:
-	def __init__(self, X, Y, lr, m, epochs, amount_data, hidden_neurons, output_neurons):
-		self.X = X
-		self.Y = Y
+	def __init__(self, lr, epochs, amount_data, hidden_neurons, output_neurons):
 		self.lr = lr
-		self.m = m
 		self.epochs = epochs
 		self.amount_data = amount_data
 		self.hidden_neurons = hidden_neurons
@@ -41,37 +40,38 @@ class NeuralNetwork:
 			return (Z * (1 - Z))
 		return 1 / (1 + np.exp(-Z))
 
-	def loss(self):
-		return (1 / self.m) * np.sum(-self.Y * np.log(self.A2) - (1 - self.Y) * (np.log(1 - self.A2)))
+	def loss(self, m, Y):
+		return (1 / m) * np.sum(-Y * np.log(self.A2) - (1 - Y) * (np.log(1 - self.A2)))
 
-	def propagation(self):
-		Z1 = (self.W1.dot(self.X)) + self.b1
+	def propagation(self, m, X, Y):
+		Z1 = (self.W1.dot(X)) + self.b1
 		self.A1 = self.sigmoid(Z1)
 		Z2 = (self.W2.dot(self.A1)) + self.b2
 		self.A2 = self.sigmoid(Z2)
 
-	def backpropagation(self):
-		loss_A2 = self.A2 - self.Y
-		loss_W2 = (1/  self.m) * (loss_A2.dot(self.A1.T))
-		loss_b2 = (1 / self.m) * np.sum(loss_A2, axis=1, keepdims=True)
+	def backpropagation(self, m, X, Y):
+		loss_A2 = self.A2 - Y
+		loss_W2 = (1/  m) * (loss_A2.dot(self.A1.T))
+		loss_b2 = (1 / m) * np.sum(loss_A2, axis=1, keepdims=True)
 	
 		loss_A1 = self.W2.T.dot(loss_A2) * self.sigmoid(self.A1, True)
-		loss_W1 = (1 / self.m) * (loss_A1.dot(self.X.T))
-		loss_b1 = (1 / self.m) * np.sum(loss_A1, axis=1, keepdims=True)
+		loss_W1 = (1 / m) * (loss_A1.dot(X.T))
+		loss_b1 = (1 / m) * np.sum(loss_A1, axis=1, keepdims=True)
 	
 		self.W2 -= self.lr * loss_W2
 		self.b2 -= self.lr * loss_b2
 		self.W1 -= self.lr * loss_W1
 		self.b1 -= self.lr * loss_b1
 
-	def fit(self):
+	def fit(self, X, Y):
+		m = X.shape[1]
 		loss_total = []
 		acc = []
-		for _ in range(self.epochs):
-			self.propagation()
-			self.backpropagation()
-			loss_total.append(self.loss())
-			acc.append(np.sum(self.Y == (self.A2 >= 0.5)) / self.m)
+		for _ in trange(self.epochs):
+			self.propagation(m, X, Y)
+			self.backpropagation(m, X, Y)
+			loss_total.append(self.loss(m, Y))
+			acc.append(np.sum(Y == (self.A2 >= 0.5)) / m)
 		return loss_total, acc
  
 
