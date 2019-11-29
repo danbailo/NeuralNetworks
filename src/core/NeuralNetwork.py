@@ -29,7 +29,6 @@ class NeuralNetwork:
 		self.__loss_validate = []
 		self.__acc_validate = []		
 
-	#OS DADOS DISPOSTOS, RELACIONADO AS CLASSES, PRECISAM ESTAR BALANCEADOS?
 	def split_data(self, X, Y, ratio):
 		smaller = min(len(Y[Y==0]), len(Y[Y==1]))
 		ratio_data = int(smaller*ratio)
@@ -41,8 +40,7 @@ class NeuralNetwork:
 
 		values = list(zip(X.T, Y.T))
 
-		#PORQUE MELHOR CASO EU EMBARALHE OS DADOS?
-		random.shuffle(values)
+		# random.shuffle(values)
 
 		data = {key:values[key] for key in range(len(values))}
 
@@ -78,7 +76,6 @@ class NeuralNetwork:
 		X_validate = X_validate.T
 		Y_train = Y_train.T
 		Y_validate = Y_validate.T
-
 		return X_train, X_validate, Y_train, Y_validate
 
 	def g(self, Z, derivative = False):
@@ -95,50 +92,18 @@ class NeuralNetwork:
 		if self.activation == "relu":
 			return np.sqrt(np.mean((Y - Y_predicted) ** 2))		
 
-	def loss(self, m, Y):
-		return (1 / m) * np.sum(-Y * np.log(self.A2) - (1 - Y) * (np.log(1 - self.A2)))
-
-	def propagation(self, m, X, Y):
-		Z1 = (self.W1.dot(X)) + self.b1
-		self.A1 = self.g(Z1)
-		Z2 = (self.W2.dot(self.A1)) + self.b2
-		self.A2 = self.g(Z2)
-
-	def backpropagation(self, m, X, Y):
-		loss_A2 = self.A2 - Y
-		loss_W2 = (1/  m) * (loss_A2.dot(self.A1.T))
-		loss_b2 = (1 / m) * np.sum(loss_A2, axis=1, keepdims=True)
-	
-		loss_A1 = self.W2.T.dot(loss_A2) * self.g(self.A1, True)
-		loss_W1 = (1 / m) * (loss_A1.dot(X.T))
-		loss_b1 = (1 / m) * np.sum(loss_A1, axis=1, keepdims=True)
-	
-		self.W2 -= self.lr * loss_W2
-		self.b2 -= self.lr * loss_b2
-		self.W1 -= self.lr * loss_W1
-		self.b1 -= self.lr * loss_b1
-
-	# def fit(self, X, Y):
-	# 	m = X.shape[1]
-	# 	loss_total = []
-	# 	acc = []
-	# 	for _ in trange(self.epochs):
-	# 		self.propagation(m, X, Y)
-	# 		self.backpropagation(m, X, Y)
-	# 		loss_total.append(self.loss(m, Y))
-	# 		acc.append(np.sum(Y == (self.A2 >= 0.5)) / m)
-	# 	return loss_total, acc
-
 	def fit(self, m, X_train, Y_train):
+		#propagation
 		Z1 = (self.W1.dot(X_train)) + self.b1
-		self.A1 = self.g(Z1)
-		Z2 = (self.W2.dot(self.A1)) + self.b2
-		self.A2 = self.g(Z2)
+		A1 = self.g(Z1)
+		Z2 = (self.W2.dot(A1)) + self.b2
+		A2 = self.g(Z2)
 
-		loss_A2 = self.A2 - Y_train
-		loss_W2 = (1/  m) * (loss_A2.dot(self.A1.T))
+		#backpropagation
+		loss_A2 = A2 - Y_train
+		loss_W2 = (1/  m) * (loss_A2.dot(A1.T))
 		loss_b2 = (1 / m) * np.sum(loss_A2, axis=1, keepdims=True)
-		loss_A1 = self.W2.T.dot(loss_A2) * self.g(self.A1, True)
+		loss_A1 = self.W2.T.dot(loss_A2) * self.g(A1, True)
 		loss_W1 = (1 / m) * (loss_A1.dot(X_train.T))
 		loss_b1 = (1 / m) * np.sum(loss_A1, axis=1, keepdims=True)
 		self.W2 -= self.lr * loss_W2
@@ -146,25 +111,18 @@ class NeuralNetwork:
 		self.W1 -= self.lr * loss_W1
 		self.b1 -= self.lr * loss_b1
 
-		self.__loss_train.append(self.cost(self.A2, Y_train, m))
-		self.__acc_train.append(np.sum((self.A2 >= 0.5) == Y_train) / m)
+		self.__loss_train.append(self.cost(A2, Y_train, m))
+		self.__acc_train.append(np.sum((A2 >= 0.5) == Y_train) / m)
 
 
 	def predict(self, m, X_validate, Y_validate):
-		loss_A2 = self.A2 - Y_validate
-		# loss_W2 = (1/  m) * (loss_A2.dot(self.A1.T))
-		loss_b2 = (1 / m) * np.sum(loss_A2, axis=1, keepdims=True)
-	
-		loss_A1 = self.W2.T.dot(loss_A2) * self.g(self.A1, True)
-		# loss_W1 = (1 / m) * (loss_A1.dot(X.T))
-		loss_b1 = (1 / m) * np.sum(loss_A1, axis=1, keepdims=True)
-		# self.W2 -= self.lr * loss_W2
-		self.b2 -= self.lr * loss_b2
-		# self.W1 -= self.lr * loss_W1
-		self.b1 -= self.lr * loss_b1
-
-		self.__loss_validate.append(self.cost(self.A2, Y_validate, m))
-		self.__acc_validate.append(np.sum((self.A2 >= 0.5) == Y_validate) / m)		
+		#propagation
+		Z1 = (self.W1.dot(X_validate)) + self.b1
+		A1 = self.g(Z1)
+		Z2 = (self.W2.dot(A1)) + self.b2
+		A2 = self.g(Z2)
+		self.__loss_validate.append(self.cost(A2, Y_validate, m))
+		self.__acc_validate.append(np.sum((A2 >= 0.5) == Y_validate) / m)	
 
 
 	def train(self, X_train, X_validate, Y_train, Y_validate):

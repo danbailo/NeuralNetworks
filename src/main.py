@@ -37,15 +37,14 @@ if __name__ == "__main__":
 		hidden_neurons = hidden_neurons,            
 		output_neurons = output_neurons)
 
-	X_train, X_validate, Y_train, Y_validate = nn.split_data(X, Y, 0.5)
+	X_train, X_validate, Y_train, Y_validate = nn.split_data(X, Y, 0.3)
 
 	loss_train, acc_train, loss_validate, acc_validate =\
 	nn.train(
 		X_train = X_train,
 		Y_train = Y_train,
 		X_validate = X_validate,
-		Y_validate = Y_validate
-	)
+		Y_validate = Y_validate)
 
 	# print(nn.W1.shape)
 
