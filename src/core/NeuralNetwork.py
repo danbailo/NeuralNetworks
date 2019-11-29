@@ -81,7 +81,7 @@ class NeuralNetwork:
 	def g(self, Z, derivative = False):
 		if self.activation == "sigmoid":
 			if derivative:
-				return (Z * (1 - Z))	
+				return self.g(Z) * (1 - self.g(Z))
 			return 1 / (1 + np.exp(-Z))
 		if self.activation == "relu":
 			return Z * (Z > 0)

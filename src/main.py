@@ -27,7 +27,7 @@ if __name__ == "__main__":
 	lr = 0.01
 	epochs = 1000
 	amount_data = X.shape[0]
-	hidden_neurons = 100
+	hidden_neurons = 3
 	output_neurons = 1
 
 	nn = NeuralNetwork(
