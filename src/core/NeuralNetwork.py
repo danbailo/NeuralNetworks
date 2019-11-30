@@ -2,6 +2,8 @@ from tqdm import trange
 import random
 import matplotlib.pyplot as plt
 import numpy as np
+import cupy as cp
+from matplotlib.animation import FuncAnimation
 
 plt.rcParams['figure.figsize'] = (10, 7)
 plt.rcParams['axes.grid'] = True
@@ -17,19 +19,22 @@ class NeuralNetwork:
 		self.output_neurons = output_neurons
 		self.activation = activation
 
-		p = 0.01
-		self.W1=np.random.rand(hidden_neurons, amount_data)*p
-		self.b1=np.random.rand(hidden_neurons,1)*p
+		p = 0.001
+		self.W1 = np.random.rand(hidden_neurons, amount_data)*p
+		self.b1 = np.random.rand(hidden_neurons,1)*p
 		
-		self.W2=np.random.rand(output_neurons, hidden_neurons)*p
-		self.b2=np.random.rand(output_neurons,1)*p
+		self.W2 = np.random.rand(output_neurons, hidden_neurons)*p
+		self.b2 = np.random.rand(output_neurons,1)*p
 
 		self.__loss_train = []
 		self.__acc_train = []
 		self.__loss_validate = []
-		self.__acc_validate = []		
+		self.__acc_validate = []
 
-	def split_data(self, X, Y, ratio):
+		self.MAX_acc_train = 0
+		self.MAX_acc_validate = 0
+
+	def split_data(self, X, Y, ratio=0.3, shuffle=False):
 		smaller = min(len(Y[Y==0]), len(Y[Y==1]))
 		ratio_data = int(smaller*ratio)
 		X_train = []
@@ -40,7 +45,8 @@ class NeuralNetwork:
 
 		values = list(zip(X.T, Y.T))
 
-		# random.shuffle(values)
+		if shuffle:
+			random.shuffle(values)
 
 		data = {key:values[key] for key in range(len(values))}
 
@@ -103,7 +109,7 @@ class NeuralNetwork:
 		loss_A2 = A2 - Y_train
 		loss_W2 = (1/  m) * (loss_A2.dot(A1.T))
 		loss_b2 = (1 / m) * np.sum(loss_A2, axis=1, keepdims=True)
-		loss_A1 = self.W2.T.dot(loss_A2) * self.g(A1, True)
+		loss_A1 = self.W2.T.dot(loss_A2) * (self.g(Z1, True))
 		loss_W1 = (1 / m) * (loss_A1.dot(X_train.T))
 		loss_b1 = (1 / m) * np.sum(loss_A1, axis=1, keepdims=True)
 		self.W2 -= self.lr * loss_W2
@@ -113,7 +119,9 @@ class NeuralNetwork:
 
 		self.__loss_train.append(self.cost(A2, Y_train, m))
 		self.__acc_train.append(np.sum((A2 >= 0.5) == Y_train) / m)
-
+		print(f"train = {self.__acc_train[-1]*100:.2f}%")
+		if self.__acc_train[-1] > self.MAX_acc_train:
+			self.MAX_acc_train = self.__acc_train[-1]
 
 	def predict(self, m, X_validate, Y_validate):
 		#propagation
@@ -122,13 +130,17 @@ class NeuralNetwork:
 		Z2 = (self.W2.dot(A1)) + self.b2
 		A2 = self.g(Z2)
 		self.__loss_validate.append(self.cost(A2, Y_validate, m))
-		self.__acc_validate.append(np.sum((A2 >= 0.5) == Y_validate) / m)	
-
+		self.__acc_validate.append(np.sum((A2 >= 0.5) == Y_validate) / m)
+		print(f"validate = {self.__acc_validate[-1]*100:.2f}%")
+		if self.__acc_validate[-1] > self.MAX_acc_validate:
+			self.MAX_acc_validate = self.__acc_validate[-1]		
 
 	def train(self, X_train, X_validate, Y_train, Y_validate):
 		m_train = X_train.shape[1]
 		m_validate = X_validate.shape[1]
+
 		for _ in trange(self.epochs):
 			self.fit(m_train, X_train, Y_train)
 			self.predict(m_validate, X_validate, Y_validate)
+			
 		return self.__loss_train, self.__acc_train, self.__loss_validate, self.__acc_validate		

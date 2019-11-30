@@ -1,6 +1,7 @@
 from core import NeuralNetwork
 from core import Graph
 import numpy as np
+import cupy as cp
 from utils import get_data
 import matplotlib.pyplot as plt
 
@@ -14,20 +15,16 @@ if __name__ == "__main__":
 	X = X_cat + X_noncat
 	Y = Y_cat + Y_noncat
 
-	X = np.asarray(X)
-	Y = np.asarray(Y)
+	X = np.transpose(np.asarray(X))
+	Y = np.transpose(np.asarray(Y))
 
-	X = X/255
-	
-	Y = np.expand_dims(Y, axis=1)
+	Y = np.expand_dims(Y, axis=0)
+	X = X/255 #normalization
 
-	Y = Y.T
-	X = X.T
-
-	lr = 0.01
-	epochs = 1000
+	lr = 0.1
+	epochs = 4000
 	amount_data = X.shape[0]
-	hidden_neurons = 3
+	hidden_neurons = 200
 	output_neurons = 1
 
 	nn = NeuralNetwork(
@@ -74,5 +71,9 @@ if __name__ == "__main__":
 	plt.legend()
 	
 	plt.show()
+
+	print(f"\nMAX train = {nn.MAX_acc_train*100:.2f}%")
+	print(f"MAX validate = {nn.MAX_acc_validate*100:.2f}%")
+
 
 	# graph.build_graph(show = False)

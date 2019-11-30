@@ -1,0 +1,30 @@
+lr = 0.1
+epochs = 2000
+amount_data = X.shape[0]
+hidden_neurons = 200
+output_neurons = 1
+p = 0.00001
+MAX train = 100.00%
+MAX validate = 59.52%
+
+=======================================================
+
+lr = 0.01
+epochs = 2000
+amount_data = X.shape[0]
+hidden_neurons = 200
+output_neurons = 1
+p = 0.00001
+MAX train = 62.75%
+MAX validate = 50.00%
+
+========================
+
+lr = 1
+epochs = 4000
+amount_data = X.shape[0]
+hidden_neurons = 200
+output_neurons = 1
+p = 0.00001
+MAX train = 98.04%
+MAX validate = 69.05%
