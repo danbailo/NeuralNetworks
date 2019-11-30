@@ -2,13 +2,11 @@ from tqdm import trange
 import random
 import matplotlib.pyplot as plt
 import numpy as np
-import cupy as cp
-from matplotlib.animation import FuncAnimation
 
 plt.rcParams['figure.figsize'] = (10, 7)
 plt.rcParams['axes.grid'] = True
 
-random.seed(1)
+np.random.seed(1)
 
 class NeuralNetwork:
 	def __init__(self, lr, epochs, amount_data, hidden_neurons, output_neurons, activation = "sigmoid"):
