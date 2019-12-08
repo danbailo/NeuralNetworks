@@ -6,7 +6,7 @@ import glob
 def get_data(directory, class_):
 	X = []
 	Y = []
-	for image_data in glob.glob(directory):
+	for image_data in sorted(glob.glob(directory)):
 		img = np.asarray(Image.open(image_data))
 		img = np.reshape(img, -1)
 		X.append(img)

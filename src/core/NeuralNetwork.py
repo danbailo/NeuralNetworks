@@ -32,7 +32,7 @@ class NeuralNetwork:
 		self.MAX_acc_train = 0
 		self.MAX_acc_validate = 0
 
-	def split_data(self, X, Y, ratio=0.3, shuffle=False):
+	def split_data(self, X, Y, ratio=0.3):
 		smaller = min(len(Y[Y==0]), len(Y[Y==1]))
 		ratio_data = int(smaller*ratio)
 		X_train = []
@@ -42,10 +42,6 @@ class NeuralNetwork:
 		indexes = []
 
 		values = list(zip(X.T, Y.T))
-
-		if shuffle:
-			random.shuffle(values)
-
 		data = {key:values[key] for key in range(len(values))}
 
 		for k,v in data.items():

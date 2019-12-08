@@ -20,7 +20,7 @@ if __name__ == "__main__":
 	Y = np.expand_dims(Y, axis=0)
 	X = X/255 #normalization
 
-	lr = 0.01
+	lr = 0.001
 	epochs = 5000
 	amount_data = X.shape[0]
 	hidden_neurons = 64
